@@ -530,6 +530,10 @@ body::before {
 }
 .form-control:focus { border-color: var(--accent-primary); }
 .form-control::placeholder { color: var(--text-muted); }
+select option {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
 select.form-control {
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a0a0b8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
