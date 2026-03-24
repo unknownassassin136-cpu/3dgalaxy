@@ -1,0 +1,108 @@
+<!-- PRODUCTS CATALOG -->
+<div class="catalog-layout container">
+  <!-- Sidebar Filters -->
+  <aside class="filter-sidebar">
+    <h3 style="font-size:1.1rem; margin-bottom:20px;">Filters</h3>
+
+    <div class="search-bar">
+      <input type="text" ng-model="filters.search" placeholder="Search products..." ng-keyup="$event.keyCode === 13 && applyFilters()">
+      <button class="btn btn-primary btn-sm btn-icon" ng-click="applyFilters()"><i class="fas fa-search"></i></button>
+    </div>
+
+    <div class="filter-section">
+      <h4>Category</h4>
+      <label class="filter-option" ng-click="filters.category=''; applyFilters();" ng-class="{active: !filters.category}">
+        <input type="radio" name="cat" ng-checked="!filters.category"> All Categories
+      </label>
+      <label class="filter-option" ng-repeat="cat in categories" ng-click="filters.category=cat._id; applyFilters();" ng-class="{active: filters.category===cat._id}">
+        <input type="radio" name="cat" ng-checked="filters.category===cat._id"> {{cat.name}}
+      </label>
+    </div>
+
+    <div class="filter-section">
+      <h4>Price Range</h4>
+      <div class="form-row">
+        <input type="number" class="form-control" placeholder="Min ₹" ng-model="filters.minPrice">
+        <input type="number" class="form-control" placeholder="Max ₹" ng-model="filters.maxPrice">
+      </div>
+      <button class="btn btn-outline btn-sm w-100 mt-2" ng-click="applyFilters()">Apply Price</button>
+    </div>
+
+    <div class="filter-section">
+      <h4>Sort By</h4>
+      <select class="form-control" ng-model="filters.sort" ng-change="applyFilters()">
+        <option value="newest">Newest First</option>
+        <option value="price_asc">Price: Low to High</option>
+        <option value="price_desc">Price: High to Low</option>
+        <option value="rating">Top Rated</option>
+        <option value="name_asc">Name: A to Z</option>
+      </select>
+    </div>
+
+    <button class="btn btn-secondary btn-sm w-100" ng-click="clearFilters()">
+      <i class="fas fa-times"></i> Clear Filters
+    </button>
+  </aside>
+
+  <!-- Product Grid -->
+  <main>
+    <div class="catalog-toolbar">
+      <span class="result-count">Showing {{products.length}} of {{total}} products</span>
+    </div>
+
+    <div class="page-loader" ng-show="loading"><div class="spinner"></div></div>
+
+    <div class="empty-state" ng-show="!loading && products.length === 0">
+      <div class="empty-icon">🔍</div>
+      <h3>No products found</h3>
+      <p>Try adjusting your filters or search terms</p>
+      <button class="btn btn-primary mt-2" ng-click="clearFilters()">Clear Filters</button>
+    </div>
+
+    <div class="product-grid stagger" ng-hide="loading || products.length === 0">
+      <div class="product-card" ng-repeat="product in products">
+        <a href="#!/product/{{product._id}}">
+          <div class="product-card-image">
+            <img ng-src="{{product.images[0]}}" alt="{{product.name}}">
+            <div class="product-card-badges">
+              <span class="badge badge-sale" ng-show="getDiscount(product) > 0">{{getDiscount(product)}}% OFF</span>
+              <span class="badge badge-featured" ng-show="product.featured">★ Featured</span>
+            </div>
+          </div>
+        </a>
+        <div class="product-card-body">
+          <div class="product-card-category" ng-if="product.category">{{product.category.name}}</div>
+          <h3 class="product-card-title">{{product.name}}</h3>
+          <div class="product-card-rating">
+            <span class="stars">{{product.averageRating | stars}}</span>
+            <span class="rating-count">({{product.numReviews}})</span>
+          </div>
+          <div class="product-card-price">
+            <span class="price-current">{{(product.salePrice || product.price) | inr}}</span>
+            <span class="price-original" ng-show="product.salePrice && product.salePrice < product.price">{{product.price | inr}}</span>
+            <span class="price-discount" ng-show="getDiscount(product) > 0">Save {{getDiscount(product)}}%</span>
+          </div>
+          <div class="product-card-actions">
+            <button class="btn btn-primary btn-sm" ng-click="addToCart(product)">
+              <i class="fas fa-cart-plus"></i> Add to Cart
+            </button>
+            <a href="#!/product/{{product._id}}" class="btn btn-outline btn-sm btn-icon" title="View">
+              <i class="fas fa-eye"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" ng-show="totalPages > 1">
+      <button ng-click="goToPage(currentPage - 1)" ng-disabled="currentPage <= 1">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <button ng-repeat="p in getPages()" ng-click="goToPage(p)" ng-class="{active: p === currentPage}">{{p}}</button>
+      <button ng-click="goToPage(currentPage + 1)" ng-disabled="currentPage >= totalPages">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </main>
+</div>

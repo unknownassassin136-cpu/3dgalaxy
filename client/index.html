@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="galaxyStore">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="3D Galaxy Store - Premium 3D Miniatures, Moon Lamps, and Customised Gifts. The perfect gift for your loved ones.">
+  <title>3D Galaxy Store — Premium Customised Gifts</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+  <!-- Toast Notifications -->
+  <div class="toast-container" ng-controller="ToastCtrl">
+    <div class="toast" ng-repeat="toast in toasts track by $index"
+         ng-class="'alert-' + toast.type" ng-style="{animationDelay: $index * 0.1 + 's'}">
+      <i class="fas" ng-class="{
+        'fa-check-circle': toast.type==='success',
+        'fa-exclamation-circle': toast.type==='danger',
+        'fa-info-circle': toast.type==='info',
+        'fa-exclamation-triangle': toast.type==='warning'
+      }"></i>
+      <span>{{toast.message}}</span>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="navbar" id="main-navbar">
+    <div class="container">
+      <a href="#!/" class="navbar-brand">
+        <span class="brand-icon"><i class="fas fa-cube"></i></span>
+        3D Galaxy
+      </a>
+
+      <div class="navbar-nav" id="nav-menu" ng-controller="NavCtrl">
+        <a href="#!/" ng-class="{active: isActive('/')}">Home</a>
+        <a href="#!/products" ng-class="{active: isActive('/products')}">Shop</a>
+        <a href="#!/products?category=3d-miniatures">Miniatures</a>
+        <a href="#!/products?category=3d-moon-lamps">Moon Lamps</a>
+        <a href="#!/contact">Contact</a>
+      </div>
+
+      <div class="navbar-actions" ng-controller="NavActionsCtrl">
+        <a href="#!/products" class="nav-icon-btn" title="Search">
+          <i class="fas fa-search"></i>
+        </a>
+        <a href="#!/cart" class="nav-icon-btn" title="Cart">
+          <i class="fas fa-shopping-bag"></i>
+          <span class="cart-badge" ng-show="cartCount > 0">{{cartCount}}</span>
+        </a>
+        <a href="#!/profile" class="nav-icon-btn" ng-show="isLoggedIn" title="Profile">
+          <i class="fas fa-user"></i>
+        </a>
+        <a href="#!/login" class="btn btn-primary btn-sm" ng-hide="isLoggedIn">Login</a>
+        <a href="#!/admin" class="nav-icon-btn" ng-show="isAdmin" title="Admin Panel">
+          <i class="fas fa-shield-halved"></i>
+        </a>
+        <div class="mobile-toggle" onclick="document.getElementById('nav-menu').classList.toggle('open')">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content (ngView) -->
+  <div ng-view class="animate-fade-in"></div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">✦ 3D Galaxy Store</div>
+          <p class="footer-desc">Premium customised gifts crafted with love. From lifelike 3D miniatures to stunning moon lamps, we create unforgettable memories.</p>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+        <div>
+          <h4>Shop</h4>
+          <ul>
+            <li><a href="#!/products">All Products</a></li>
+            <li><a href="#!/products?category=3d-miniatures">3D Miniatures</a></li>
+            <li><a href="#!/products?category=3d-moon-lamps">Moon Lamps</a></li>
+            <li><a href="#!/products?category=couple-gifts">Couple Gifts</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#!/contact">Contact Us</a></li>
+            <li><a href="#">Shipping Info</a></li>
+            <li><a href="#">Return Policy</a></li>
+            <li><a href="#">FAQ</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Account</h4>
+          <ul>
+            <li><a href="#!/profile">My Account</a></li>
+            <li><a href="#!/profile/orders">Order History</a></li>
+            <li><a href="#!/cart">My Cart</a></li>
+            <li><a href="#">Track Order</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 3D Galaxy Store. All rights reserved.</span>
+        <span>Crafted with ♥ in India</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- AngularJS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular-route.min.js"></script>
+
+  <!-- App -->
+  <script src="app.js"></script>
+
+  <!-- Services -->
+  <script src="services/AuthService.js"></script>
+  <script src="services/ProductService.js"></script>
+  <script src="services/CartService.js"></script>
+  <script src="services/OrderService.js"></script>
+  <script src="services/AdminService.js"></script>
+
+  <!-- Controllers -->
+  <script src="controllers/NavCtrl.js"></script>
+  <script src="controllers/HomeCtrl.js"></script>
+  <script src="controllers/ProductsCtrl.js"></script>
+  <script src="controllers/ProductDetailCtrl.js"></script>
+  <script src="controllers/CartCtrl.js"></script>
+  <script src="controllers/CheckoutCtrl.js"></script>
+  <script src="controllers/AuthCtrl.js"></script>
+  <script src="controllers/ProfileCtrl.js"></script>
+  <script src="controllers/AdminCtrl.js"></script>
+
+</body>
+</html>

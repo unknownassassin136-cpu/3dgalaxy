@@ -1,0 +1,141 @@
+<!-- PRODUCT DETAIL PAGE -->
+<div class="product-detail">
+  <div class="container">
+    <div class="page-loader" ng-show="loading"><div class="spinner"></div></div>
+
+    <div class="product-detail-grid" ng-if="product && !loading">
+      <!-- Image Gallery -->
+      <div class="gallery">
+        <div class="gallery-main">
+          <img ng-src="{{selectedImage}}" alt="{{product.name}}">
+        </div>
+        <div class="gallery-thumbs">
+          <div class="gallery-thumb" ng-repeat="img in product.images"
+               ng-class="{active: selectedImage === img}" ng-click="selectImage(img)">
+            <img ng-src="{{img}}" alt="Thumbnail">
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Info -->
+      <div class="product-info">
+        <div class="product-card-category" ng-if="product.category">{{product.category.name}}</div>
+        <h1>{{product.name}}</h1>
+
+        <div class="product-meta">
+          <div class="product-card-rating">
+            <span class="stars">{{product.averageRating | stars}}</span>
+            <span class="rating-count">({{product.numReviews}} reviews)</span>
+          </div>
+          <span ng-class="{'stock-in': product.stock > 5, 'stock-low': product.stock > 0 && product.stock <= 5, 'stock-out': product.stock === 0}" class="stock-badge">
+            <i class="fas" ng-class="{'fa-check-circle': product.stock > 0, 'fa-times-circle': product.stock === 0}"></i>
+            <span ng-show="product.stock > 5">In Stock</span>
+            <span ng-show="product.stock > 0 && product.stock <= 5">Only {{product.stock}} left!</span>
+            <span ng-show="product.stock === 0">Out of Stock</span>
+          </span>
+        </div>
+
+        <div class="product-price">
+          <span class="price-current">{{(product.salePrice || product.price) | inr}}</span>
+          <span class="price-original" ng-show="product.salePrice && product.salePrice < product.price">{{product.price | inr}}</span>
+          <span class="badge badge-sale" ng-show="getDiscount() > 0">{{getDiscount()}}% OFF</span>
+        </div>
+
+        <p class="product-description">{{product.description}}</p>
+
+        <!-- Quantity -->
+        <div style="margin-bottom:20px;">
+          <label style="font-size:0.85rem; color:var(--text-secondary); display:block; margin-bottom:8px;">Quantity</label>
+          <div class="quantity-selector">
+            <button ng-click="changeQuantity(-1)">−</button>
+            <input type="number" ng-model="quantity" min="1" max="{{product.stock}}" readonly>
+            <button ng-click="changeQuantity(1)">+</button>
+          </div>
+        </div>
+
+        <!-- Add to Cart -->
+        <div style="display:flex; gap:12px; margin-bottom:32px;">
+          <button class="btn btn-primary btn-lg" ng-click="addToCart()" ng-disabled="product.stock === 0">
+            <i class="fas fa-shopping-bag"></i> Add to Cart
+          </button>
+          <a href="#!/cart" class="btn btn-outline btn-lg">
+            <i class="fas fa-shopping-cart"></i> View Cart
+          </a>
+        </div>
+
+        <!-- Specifications -->
+        <div ng-show="product.specifications.length > 0">
+          <h3 style="font-size:1.1rem; margin-bottom:12px;">Specifications</h3>
+          <table class="specs-table">
+            <tr ng-repeat="spec in product.specifications">
+              <td>{{spec.key}}</td>
+              <td>{{spec.value}}</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Tags -->
+        <div style="margin-top:20px;" ng-show="product.tags.length > 0">
+          <span ng-repeat="tag in product.tags" style="display:inline-block; padding:4px 12px; border-radius:99px; background:var(--bg-glass); border:1px solid var(--border); font-size:0.8rem; color:var(--text-secondary); margin:0 6px 6px 0;">{{tag}}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <section class="section" ng-if="product">
+      <h2 style="font-size:1.5rem; margin-bottom:24px;">Customer Reviews ({{product.numReviews}})</h2>
+
+      <!-- Write Review -->
+      <div class="form-card" style="margin-bottom:24px;" ng-show="isLoggedIn">
+        <h3>Write a Review</h3>
+        <div class="form-group">
+          <label>Rating</label>
+          <select class="form-control" ng-model="reviewForm.rating" style="width:120px;">
+            <option value="5">★★★★★ (5)</option>
+            <option value="4">★★★★☆ (4)</option>
+            <option value="3">★★★☆☆ (3)</option>
+            <option value="2">★★☆☆☆ (2)</option>
+            <option value="1">★☆☆☆☆ (1)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Comment</label>
+          <textarea class="form-control" rows="3" ng-model="reviewForm.comment" placeholder="Share your experience..."></textarea>
+        </div>
+        <button class="btn btn-primary" ng-click="submitReview()">Submit Review</button>
+      </div>
+
+      <!-- Reviews List -->
+      <div ng-repeat="review in product.reviews" style="padding:16px 0; border-bottom:1px solid var(--border);">
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+          <strong>{{review.name}}</strong>
+          <span class="stars" style="font-size:0.85rem;">{{review.rating | stars}}</span>
+        </div>
+        <p style="color:var(--text-secondary); font-size:0.9rem;">{{review.comment}}</p>
+      </div>
+      <div class="empty-state" ng-show="product.reviews.length === 0" style="padding:30px;">
+        <p>No reviews yet. Be the first to review this product!</p>
+      </div>
+    </section>
+
+    <!-- Related Products -->
+    <section class="section" ng-show="relatedProducts.length > 0">
+      <h2 style="font-size:1.5rem; margin-bottom:24px;">You May Also Like</h2>
+      <div class="product-grid">
+        <div class="product-card" ng-repeat="p in relatedProducts">
+          <a href="#!/product/{{p._id}}">
+            <div class="product-card-image">
+              <img ng-src="{{p.images[0]}}" alt="{{p.name}}">
+            </div>
+          </a>
+          <div class="product-card-body">
+            <h3 class="product-card-title">{{p.name}}</h3>
+            <div class="product-card-price">
+              <span class="price-current">{{(p.salePrice || p.price) | inr}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

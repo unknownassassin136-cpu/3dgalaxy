@@ -1,0 +1,172 @@
+<!-- HOME PAGE -->
+<div class="home-page">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">✦ Premium 3D Printed Gifts</div>
+      <h1>Unforgettable Gifts For Your Loved Ones</h1>
+      <p>Turn your photos into stunning 3D miniatures, personalized moon lamps, and unique customised gifts. Crafted with love, delivered with joy.</p>
+      <div class="hero-actions">
+        <a href="#!/products" class="btn btn-primary btn-lg">
+          <i class="fas fa-shopping-bag"></i> Shop Now
+        </a>
+        <a href="#!/products?featured=true" class="btn btn-secondary btn-lg">
+          View Bestsellers
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Shop From Our Collections</h2>
+        <p>Explore our curated categories of premium customised gifts</p>
+      </div>
+      <div class="category-grid stagger">
+        <a ng-repeat="cat in categories" href="#!/products?category={{cat._id}}" class="category-card">
+          <img ng-src="{{cat.image}}" alt="{{cat.name}}">
+          <div class="category-card-overlay">
+            <h3>{{cat.name}}</h3>
+            <span>Explore Collection →</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- BESTSELLERS -->
+  <section class="section" style="background: var(--surface);">
+    <div class="container">
+      <div class="section-header">
+        <h2>Our Proven Bestsellers</h2>
+        <p>Most loved products by our customers</p>
+      </div>
+      <div class="page-loader" ng-show="loading"><div class="spinner"></div></div>
+      <div class="product-grid stagger" ng-hide="loading">
+        <div class="product-card" ng-repeat="product in bestsellers">
+          <a href="#!/product/{{product._id}}">
+            <div class="product-card-image">
+              <img ng-src="{{product.images[0]}}" alt="{{product.name}}">
+              <div class="product-card-badges">
+                <span class="badge badge-sale" ng-show="getDiscount(product) > 0">{{getDiscount(product)}}% OFF</span>
+                <span class="badge badge-featured" ng-show="product.featured">★ Featured</span>
+              </div>
+            </div>
+          </a>
+          <div class="product-card-body">
+            <div class="product-card-category" ng-if="product.category">{{product.category.name}}</div>
+            <h3 class="product-card-title">{{product.name}}</h3>
+            <div class="product-card-rating">
+              <span class="stars">{{product.averageRating | stars}}</span>
+              <span class="rating-count">({{product.numReviews}})</span>
+            </div>
+            <div class="product-card-price">
+              <span class="price-current">{{(product.salePrice || product.price) | inr}}</span>
+              <span class="price-original" ng-show="product.salePrice && product.salePrice < product.price">{{product.price | inr}}</span>
+            </div>
+            <div class="product-card-actions">
+              <button class="btn btn-primary btn-sm" ng-click="addToCart(product)">
+                <i class="fas fa-cart-plus"></i> Add to Cart
+              </button>
+              <a href="#!/product/{{product._id}}" class="btn btn-outline btn-sm btn-icon" title="View Details">
+                <i class="fas fa-eye"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-4">
+        <a href="#!/products" class="btn btn-secondary">View All Products <i class="fas fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED PRODUCTS -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Featured Products</h2>
+        <p>Hand-picked selections just for you</p>
+      </div>
+      <div class="product-grid stagger">
+        <div class="product-card" ng-repeat="product in featured">
+          <a href="#!/product/{{product._id}}">
+            <div class="product-card-image">
+              <img ng-src="{{product.images[0]}}" alt="{{product.name}}">
+              <div class="product-card-badges">
+                <span class="badge badge-sale" ng-show="getDiscount(product) > 0">{{getDiscount(product)}}% OFF</span>
+              </div>
+            </div>
+          </a>
+          <div class="product-card-body">
+            <div class="product-card-category" ng-if="product.category">{{product.category.name}}</div>
+            <h3 class="product-card-title">{{product.name}}</h3>
+            <div class="product-card-price">
+              <span class="price-current">{{(product.salePrice || product.price) | inr}}</span>
+              <span class="price-original" ng-show="product.salePrice && product.salePrice < product.price">{{product.price | inr}}</span>
+            </div>
+            <div class="product-card-actions">
+              <button class="btn btn-primary btn-sm" ng-click="addToCart(product)">
+                <i class="fas fa-cart-plus"></i> Add to Cart
+              </button>
+              <a href="#!/product/{{product._id}}" class="btn btn-outline btn-sm btn-icon" title="View">
+                <i class="fas fa-eye"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section" style="background: var(--surface);">
+    <div class="container">
+      <div class="section-header">
+        <h2>What Our Customers Say</h2>
+        <p>Real reviews from real customers</p>
+      </div>
+      <div class="testimonial-grid stagger">
+        <div class="testimonial-card" ng-repeat="t in testimonials">
+          <div class="testimonial-stars">
+            <i class="fas fa-star" ng-repeat="s in [1,2,3,4,5]" ng-show="s <= t.rating"></i>
+            <i class="far fa-star" ng-repeat="s in [1,2,3,4,5]" ng-show="s > t.rating"></i>
+          </div>
+          <p class="testimonial-text">"{{t.text}}"</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">{{t.initial}}</div>
+            <div>
+              <div class="testimonial-author-name">{{t.name}}</div>
+              <div class="testimonial-author-role">Verified Buyer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Frequently Asked Questions</h2>
+        <p>Everything you need to know</p>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item" ng-repeat="faq in faqs" ng-class="{active: activeFaq === $index}">
+          <div class="faq-question" ng-click="toggleFaq($index)">
+            <span>{{faq.q}}</span>
+            <span class="icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <p>{{faq.a}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>

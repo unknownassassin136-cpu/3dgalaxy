@@ -1,0 +1,149 @@
+<!-- ADMIN DASHBOARD -->
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <aside class="admin-sidebar" ng-class="{'open': mobileSidebarOpen}">
+    <h3>Overview</h3>
+    <nav class="admin-nav mb-3">
+      <a href="#!/admin" class="active"><i class="fas fa-home"></i> Dashboard</a>
+    </nav>
+
+    <h3>Catalog</h3>
+    <nav class="admin-nav mb-3">
+      <a href="#!/admin/products"><i class="fas fa-box"></i> Products</a>
+      <a href="#!/admin/categories"><i class="fas fa-tags"></i> Categories</a>
+    </nav>
+
+    <h3>Sales</h3>
+    <nav class="admin-nav mb-3">
+      <a href="#!/admin/orders"><i class="fas fa-shopping-cart"></i> Orders</a>
+      <a href="#!/admin/coupons"><i class="fas fa-ticket-alt"></i> Coupons</a>
+    </nav>
+
+    <h3>People</h3>
+    <nav class="admin-nav">
+      <a href="#!/admin/users"><i class="fas fa-users"></i> Users</a>
+    </nav>
+  </aside>
+
+  <!-- Content -->
+  <main class="admin-content">
+    <div class="admin-header">
+      <div style="display:flex; align-items:center; gap:16px;">
+        <button class="btn btn-icon btn-secondary d-md-none" ng-click="mobileSidebarOpen = !mobileSidebarOpen" style="display:none;">
+          <i class="fas fa-bars"></i>
+        </button>
+        <h1>Dashboard Overview</h1>
+      </div>
+      <div>
+        <a href="#!/" class="btn btn-outline btn-sm"><i class="fas fa-store"></i> View Store</a>
+      </div>
+    </div>
+
+    <div class="page-loader" ng-show="loading"><div class="spinner"></div></div>
+
+    <div ng-hide="loading">
+      <!-- Stats Cards -->
+      <div class="stats-grid stagger">
+        <div class="stat-card">
+          <div class="stat-card-icon purple"><i class="fas fa-rupee-sign"></i></div>
+          <h3>{{stats.totalRevenue | inr}}</h3>
+          <p>Total Revenue</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon cyan"><i class="fas fa-shopping-bag"></i></div>
+          <h3>{{stats.totalOrders}}</h3>
+          <p>Total Orders</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon green"><i class="fas fa-users"></i></div>
+          <h3>{{stats.totalUsers}}</h3>
+          <p>Registered Customers</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon yellow"><i class="fas fa-box-open"></i></div>
+          <h3>{{stats.lowStockProducts}}</h3>
+          <p>Low Stock Items &le; 5</p>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px; margin-bottom:32px;">
+        <!-- Order Status Summary -->
+        <div class="form-card">
+          <h3 style="margin-bottom:20px;">Order Status</h3>
+          <div style="display:flex; justify-content:space-between; margin-bottom:12px; padding:12px; background:var(--bg-glass); border-radius:8px;">
+            <span style="display:flex; align-items:center; gap:8px;"><span style="width:10px; height:10px; border-radius:50%; background:var(--warning);"></span> Pending</span>
+            <span style="font-weight:600;">{{getStatusCount('pending')}}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:12px; padding:12px; background:var(--bg-glass); border-radius:8px;">
+            <span style="display:flex; align-items:center; gap:8px;"><span style="width:10px; height:10px; border-radius:50%; background:var(--info);"></span> Confirmed</span>
+            <span style="font-weight:600;">{{getStatusCount('confirmed')}}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:12px; padding:12px; background:var(--bg-glass); border-radius:8px;">
+            <span style="display:flex; align-items:center; gap:8px;"><span style="width:10px; height:10px; border-radius:50%; background:var(--accent-primary-light);"></span> Processing</span>
+            <span style="font-weight:600;">{{getStatusCount('processing')}}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:12px; padding:12px; background:var(--bg-glass); border-radius:8px;">
+            <span style="display:flex; align-items:center; gap:8px;"><span style="width:10px; height:10px; border-radius:50%; background:var(--accent-secondary);"></span> Shipped</span>
+            <span style="font-weight:600;">{{getStatusCount('shipped')}}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; padding:12px; background:var(--bg-glass); border-radius:8px;">
+            <span style="display:flex; align-items:center; gap:8px;"><span style="width:10px; height:10px; border-radius:50%; background:var(--success);"></span> Delivered</span>
+            <span style="font-weight:600;">{{getStatusCount('delivered')}}</span>
+          </div>
+        </div>
+
+        <!-- Top Products -->
+        <div class="form-card">
+          <h3 style="margin-bottom:20px;">Top Selling Products</h3>
+          <div ng-repeat="p in stats.topProducts" style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border);">
+            <div style="flex:1;">
+              <div style="font-size:0.9rem; font-weight:500;">{{p.name}}</div>
+              <div style="font-size:0.8rem; color:var(--text-muted);">{{p.totalSold}} units sold</div>
+            </div>
+            <div style="font-weight:600; color:var(--success);">{{p.revenue | inr}}</div>
+          </div>
+          <div class="empty-state" ng-show="!stats.topProducts || stats.topProducts.length === 0" style="padding:20px;">
+            <p>No sales data yet</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Orders -->
+      <div class="form-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+          <h3 style="margin-bottom:0; padding-bottom:0; border:none;">Recent Orders</h3>
+          <a href="#!/admin/orders" class="btn btn-outline btn-sm">View All</a>
+        </div>
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="order in stats.recentOrders">
+                <td style="font-weight:500;"><a href="#!/order/{{order._id}}">{{order.orderNumber}}</a></td>
+                <td>{{order.createdAt | date:'dd MMM yyyy'}}</td>
+                <td>
+                  <div>{{order.shippingAddress.fullName}}</div>
+                  <div style="font-size:0.8rem; color:var(--text-muted);">{{order.user.email}}</div>
+                </td>
+                <td style="font-weight:600;">{{order.totalPrice | inr}}</td>
+                <td><span class="order-status status-{{order.status}}">{{order.status}}</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="empty-state" ng-show="!stats.recentOrders || stats.recentOrders.length === 0" style="padding:40px;">
+            <p>No recent orders found</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>

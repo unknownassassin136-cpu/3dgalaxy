@@ -1,0 +1,161 @@
+<!-- ADMIN PRODUCTS -->
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <h3>Overview</h3>
+    <nav class="admin-nav mb-3"><a href="#!/admin"><i class="fas fa-home"></i> Dashboard</a></nav>
+    <h3>Catalog</h3>
+    <nav class="admin-nav mb-3">
+      <a href="#!/admin/products" class="active"><i class="fas fa-box"></i> Products</a>
+      <a href="#!/admin/categories"><i class="fas fa-tags"></i> Categories</a>
+    </nav>
+    <h3>Sales</h3>
+    <nav class="admin-nav mb-3">
+      <a href="#!/admin/orders"><i class="fas fa-shopping-cart"></i> Orders</a>
+      <a href="#!/admin/coupons"><i class="fas fa-ticket-alt"></i> Coupons</a>
+    </nav>
+    <h3>People</h3>
+    <nav class="admin-nav"><a href="#!/admin/users"><i class="fas fa-users"></i> Users</a></nav>
+  </aside>
+
+  <!-- Content -->
+  <main class="admin-content">
+    <div class="admin-header">
+      <h1>Products</h1>
+      <button class="btn btn-primary" ng-click="openAdd()"><i class="fas fa-plus"></i> Add Product</button>
+    </div>
+
+    <div class="page-loader" ng-show="loading"><div class="spinner"></div></div>
+
+    <div class="data-table-container animate-fade-in-up" ng-hide="loading">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="p in products">
+            <td>
+              <div class="product-cell">
+                <div class="product-thumb"><img ng-src="{{p.images[0]}}" alt="{{p.name}}"></div>
+                <div>
+                  <div style="font-weight:500;">{{p.name}}</div>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">SKU: {{p.sku || 'N/A'}}</div>
+                </div>
+              </div>
+            </td>
+            <td>{{p.category.name}}</td>
+            <td>
+              <div>{{p.price | inr}}</div>
+              <div ng-show="p.salePrice" style="font-size:0.8rem; color:var(--success);">Sale: {{p.salePrice | inr}}</div>
+            </td>
+            <td>
+              <span ng-class="{'stock-in': p.stock>5, 'stock-low': p.stock<=5&&p.stock>0, 'stock-out': p.stock===0}" style="font-weight:600;">{{p.stock}}</span>
+            </td>
+            <td>
+              <span class="badge" ng-class="p.isActive ? 'badge-new' : 'badge-danger'">{{p.isActive ? 'Active' : 'Draft'}}</span>
+              <span class="badge badge-featured" ng-show="p.featured" style="margin-left:4px;">Featured</span>
+            </td>
+            <td>
+              <button class="btn btn-icon btn-sm" style="color:var(--info);" ng-click="openEdit(p)"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-icon btn-sm" style="color:var(--danger);" ng-click="deleteProduct(p)"><i class="fas fa-trash-alt"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal-overlay" ng-show="showModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>{{editMode ? 'Edit Product' : 'Add New Product'}}</h2>
+          <button class="modal-close" ng-click="showModal = false"><i class="fas fa-times"></i></button>
+        </div>
+        <form ng-submit="saveProduct()">
+          <div class="form-group">
+            <label>Name *</label>
+            <input type="text" class="form-control" ng-model="form.name" ng-change="!editMode && generateSlug()" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Slug *</label>
+              <input type="text" class="form-control" ng-model="form.slug" required>
+            </div>
+            <div class="form-group">
+              <label>SKU</label>
+              <input type="text" class="form-control" ng-model="form.sku">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Category *</label>
+              <select class="form-control" ng-model="form.category" required>
+                <option value="">Select Category</option>
+                <option ng-repeat="c in categories" value="{{c._id}}">{{c.name}}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Stock *</label>
+              <input type="number" class="form-control" ng-model="form.stock" min="0" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Regular Price (₹) *</label>
+              <input type="number" class="form-control" ng-model="form.price" min="0" required>
+            </div>
+            <div class="form-group">
+              <label>Sale Price (₹)</label>
+              <input type="number" class="form-control" ng-model="form.salePrice" min="0">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Short Description</label>
+            <input type="text" class="form-control" ng-model="form.shortDescription">
+          </div>
+          <div class="form-group">
+            <label>Full Description *</label>
+            <textarea class="form-control" rows="4" ng-model="form.description" required></textarea>
+          </div>
+
+          <!-- Attributes -->
+          <div class="form-row mb-3">
+            <label class="filter-option" style="margin-right:20px;">
+              <input type="checkbox" ng-model="form.isActive"> Is Active (Visible)
+            </label>
+            <label class="filter-option">
+              <input type="checkbox" ng-model="form.featured"> Featured Product
+            </label>
+          </div>
+
+          <!-- Images -->
+          <div class="form-card mb-3" style="padding:16px;">
+            <label>Images (URLs)</label>
+            <div style="display:flex; gap:8px; margin-bottom:12px;">
+              <input type="url" class="form-control" ng-model="newImage" placeholder="https://image-url.com/img.jpg">
+              <button type="button" class="btn btn-secondary" ng-click="addImage()">Add</button>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <div ng-repeat="img in form.images track by $index" style="position:relative; width:60px; height:60px; border-radius:4px; overflow:hidden;">
+                <img ng-src="{{img}}" style="width:100%; height:100%; object-fit:cover;">
+                <button type="button" ng-click="removeImage($index)" style="position:absolute; top:2px; right:2px; background:rgba(0,0,0,0.5); color:white; border-radius:50%; width:20px; height:20px; font-size:10px;">×</button>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:24px;">
+            <button type="button" class="btn btn-outline" ng-click="showModal = false">Cancel</button>
+            <button type="submit" class="btn btn-primary">{{editMode ? 'Update' : 'Save'} Product</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>

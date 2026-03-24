@@ -1,0 +1,102 @@
+<!-- CHECKOUT PAGE -->
+<div class="checkout-page">
+  <div class="container">
+    <h1 style="font-family:var(--font-display); font-size:2rem; margin-bottom:32px;">
+      <i class="fas fa-lock" style="color:var(--accent-primary-light);"></i> Secure Checkout
+    </h1>
+
+    <div class="page-loader" ng-show="loading"><div class="spinner"></div></div>
+
+    <div class="checkout-layout" ng-hide="loading">
+      <!-- Shipping Form -->
+      <div>
+        <div class="form-card">
+          <h3><i class="fas fa-truck"></i> Shipping Address</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input type="text" class="form-control" ng-model="shipping.fullName" placeholder="John Doe">
+            </div>
+            <div class="form-group">
+              <label>Phone *</label>
+              <input type="tel" class="form-control" ng-model="shipping.phone" placeholder="+91 9876543210">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Street Address *</label>
+            <input type="text" class="form-control" ng-model="shipping.street" placeholder="123 Main Street, Apt 4">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>City *</label>
+              <input type="text" class="form-control" ng-model="shipping.city" placeholder="Mumbai">
+            </div>
+            <div class="form-group">
+              <label>State *</label>
+              <input type="text" class="form-control" ng-model="shipping.state" placeholder="Maharashtra">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>PIN Code *</label>
+              <input type="text" class="form-control" ng-model="shipping.zipCode" placeholder="400001">
+            </div>
+            <div class="form-group">
+              <label>Country</label>
+              <input type="text" class="form-control" ng-model="shipping.country" value="India">
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="form-card" style="margin-top:20px;">
+          <h3><i class="fas fa-credit-card"></i> Payment Method</h3>
+          <label class="filter-option" ng-click="paymentMethod='razorpay'" ng-class="{active: paymentMethod==='razorpay'}">
+            <input type="radio" name="payment" ng-checked="paymentMethod==='razorpay'">
+            <span><strong>Razorpay</strong> — UPI, Cards, Net Banking, Wallets</span>
+          </label>
+          <label class="filter-option" ng-click="paymentMethod='mock'" ng-class="{active: paymentMethod==='mock'}">
+            <input type="radio" name="payment" ng-checked="paymentMethod==='mock'">
+            <span><strong>Test Payment</strong> — Demo mode (no real charge)</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="cart-summary">
+        <h3>Order Summary</h3>
+        <div ng-repeat="item in cart.items" style="display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--border);">
+          <img ng-src="{{item.product.images[0]}}" style="width:50px; height:50px; border-radius:6px; object-fit:cover;">
+          <div style="flex:1;">
+            <div style="font-size:0.85rem; font-weight:500;">{{item.product.name}}</div>
+            <div style="font-size:0.8rem; color:var(--text-muted);">Qty: {{item.quantity}}</div>
+          </div>
+          <span style="font-weight:600; font-size:0.9rem;">{{getItemPrice(item) * item.quantity | inr}}</span>
+        </div>
+
+        <div class="cart-summary-row" style="margin-top:16px;">
+          <span>Subtotal</span><span>{{getSubtotal() | inr}}</span>
+        </div>
+        <div class="cart-summary-row">
+          <span>Shipping</span>
+          <span ng-show="getShipping() === 0" style="color:var(--success);">FREE</span>
+          <span ng-show="getShipping() > 0">{{getShipping() | inr}}</span>
+        </div>
+        <div class="cart-summary-row">
+          <span>Tax (18% GST)</span><span>{{getTax() | inr}}</span>
+        </div>
+        <div class="cart-summary-row total">
+          <span>Total</span><span>{{getTotal() | inr}}</span>
+        </div>
+
+        <button class="btn btn-primary w-100 btn-lg mt-3" ng-click="placeOrder()" ng-disabled="processing">
+          <i class="fas" ng-class="{'fa-spinner fa-spin': processing, 'fa-check': !processing}"></i>
+          {{processing ? 'Processing...' : 'Place Order — ' + (getTotal() | inr)}}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Razorpay SDK -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>

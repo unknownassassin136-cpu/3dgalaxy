@@ -1,0 +1,94 @@
+<!-- PROFILE PAGE -->
+<div class="profile-page">
+  <div class="container">
+    <div class="profile-layout">
+      <!-- Sidebar -->
+      <aside class="profile-sidebar">
+        <div class="profile-avatar">{{user.name[0]}}</div>
+        <h3 style="font-size:1.1rem;">{{user.name}}</h3>
+        <p style="color:var(--text-muted); font-size:0.85rem;">{{user.email}}</p>
+        <div class="profile-nav">
+          <a href="#!/profile" ng-class="{active: activeTab==='profile'}"><i class="fas fa-user"></i> My Profile</a>
+          <a href="#!/profile/orders" ng-class="{active: activeTab==='orders'}"><i class="fas fa-box"></i> My Orders</a>
+          <a href="#!/cart"><i class="fas fa-shopping-cart"></i> My Cart</a>
+          <a ng-click="logout()" style="cursor:pointer; color:var(--danger);"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main>
+        <!-- Profile Tab -->
+        <div ng-show="activeTab === 'profile'">
+          <div class="form-card">
+            <h3><i class="fas fa-user-edit"></i> Edit Profile</h3>
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" class="form-control" ng-model="profileForm.name">
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" class="form-control" value="{{user.email}}" disabled style="opacity:0.6;">
+            </div>
+            <div class="form-group">
+              <label>Phone</label>
+              <input type="tel" class="form-control" ng-model="profileForm.phone">
+            </div>
+            <button class="btn btn-primary" ng-click="updateProfile()">Save Changes</button>
+          </div>
+
+          <!-- Recent Orders Summary -->
+          <div class="form-card mt-3" ng-show="orders.length > 0">
+            <h3><i class="fas fa-clock"></i> Recent Orders</h3>
+            <div class="order-card" ng-repeat="order in orders | limitTo:3">
+              <div class="order-header">
+                <div>
+                  <strong>{{order.orderNumber}}</strong>
+                  <span style="color:var(--text-muted); font-size:0.85rem; margin-left:12px;">{{order.createdAt | date:'dd MMM yyyy'}}</span>
+                </div>
+                <span class="order-status" ng-class="getStatusClass(order.status)">{{order.status}}</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span>{{order.items.length}} item(s)</span>
+                <span style="font-weight:600;">{{order.totalPrice | inr}}</span>
+                <a href="#!/order/{{order._id}}" class="btn btn-outline btn-sm">View Details</a>
+              </div>
+            </div>
+            <a href="#!/profile/orders" class="btn btn-secondary btn-sm mt-2" ng-show="orders.length > 3">View All Orders</a>
+          </div>
+        </div>
+
+        <!-- Orders Tab -->
+        <div ng-show="activeTab === 'orders'">
+          <h2 style="font-size:1.5rem; margin-bottom:24px;">My Orders</h2>
+          <div class="page-loader" ng-show="loading"><div class="spinner"></div></div>
+          <div class="empty-state" ng-show="!loading && orders.length === 0">
+            <div class="empty-icon">📦</div>
+            <h3>No orders yet</h3>
+            <a href="#!/products" class="btn btn-primary mt-2">Start Shopping</a>
+          </div>
+          <div class="order-card" ng-repeat="order in orders" ng-hide="loading">
+            <div class="order-header">
+              <div>
+                <strong>{{order.orderNumber}}</strong>
+                <span style="color:var(--text-muted); font-size:0.85rem; margin-left:12px;">{{order.createdAt | date:'dd MMM yyyy, hh:mm a'}}</span>
+              </div>
+              <span class="order-status" ng-class="getStatusClass(order.status)">{{order.status}}</span>
+            </div>
+            <div ng-repeat="item in order.items" style="display:flex; gap:12px; padding:8px 0; border-bottom:1px solid var(--border);">
+              <img ng-src="{{item.image}}" style="width:50px; height:50px; border-radius:6px; object-fit:cover;">
+              <div style="flex:1;">
+                <span style="font-size:0.9rem;">{{item.name}}</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);"> × {{item.quantity}}</span>
+              </div>
+              <span style="font-weight:600;">{{item.price * item.quantity | inr}}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
+              <span style="font-weight:700;">Total: {{order.totalPrice | inr}}</span>
+              <a href="#!/order/{{order._id}}" class="btn btn-outline btn-sm">View Details</a>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,92 @@
+<!-- ADMIN ORDERS -->
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <h3>Overview</h3>
+    <nav class="admin-nav mb-3"><a href="#!/admin"><i class="fas fa-home"></i> Dashboard</a></nav>
+    <h3>Catalog</h3>
+    <nav class="admin-nav mb-3">
+      <a href="#!/admin/products"><i class="fas fa-box"></i> Products</a>
+      <a href="#!/admin/categories"><i class="fas fa-tags"></i> Categories</a>
+    </nav>
+    <h3>Sales</h3>
+    <nav class="admin-nav mb-3">
+      <a href="#!/admin/orders" class="active"><i class="fas fa-shopping-cart"></i> Orders</a>
+      <a href="#!/admin/coupons"><i class="fas fa-ticket-alt"></i> Coupons</a>
+    </nav>
+    <h3>People</h3>
+    <nav class="admin-nav"><a href="#!/admin/users"><i class="fas fa-users"></i> Users</a></nav>
+  </aside>
+
+  <!-- Content -->
+  <main class="admin-content">
+    <div class="admin-header">
+      <h1>Orders Management</h1>
+      <div>
+        <select class="form-control" style="width:200px;" ng-model="statusFilter" ng-change="loadOrders()">
+          <option value="">All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="processing">Processing</option>
+          <option value="shipped">Shipped</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="page-loader" ng-show="loading"><div class="spinner"></div></div>
+
+    <div class="data-table-container animate-fade-in-up" ng-hide="loading">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Order Number</th>
+            <th>Date</th>
+            <th>Customer</th>
+            <th>Total</th>
+            <th>Payment</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="o in orders">
+            <td style="font-weight:600;"><a href="#!/order/{{o._id}}">{{o.orderNumber}}</a></td>
+            <td>
+              <div>{{o.createdAt | date:'dd MMM yyyy'}}</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">{{o.createdAt | date:'HH:mm'}}</div>
+            </td>
+            <td>
+              <div style="font-weight:500;">{{o.shippingAddress.fullName}}</div>
+              <div style="font-size:0.8rem; color:var(--text-muted);">{{o.user.email}}</div>
+            </td>
+            <td style="font-weight:600;">{{o.totalPrice | inr}}</td>
+            <td>
+              <span class="badge" ng-class="o.isPaid ? 'badge-new' : 'badge-danger'">{{o.isPaid ? 'Paid' : 'Pending'}}</span>
+              <div style="font-size:0.7rem; margin-top:4px; text-transform:capitalize;">{{o.paymentMethod}}</div>
+            </td>
+            <td>
+              <select class="form-control" style="padding:4px 24px 4px 8px; font-size:0.8rem; background-color:var(--bg-glass);" 
+                      ng-model="o.status" ng-change="updateStatus(o, o.status)">
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="processing">Processing</option>
+                <option value="shipped">Shipped</option>
+                <option value="delivered">Delivered</option>
+                <option value="cancelled">Cancelled</option>
+                <option value="refunded">Refunded</option>
+              </select>
+            </td>
+            <td>
+              <a href="#!/order/{{o._id}}" class="btn btn-outline btn-sm">View</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="empty-state" ng-show="orders.length === 0" style="padding:40px;">
+        <p>No orders found matching the criteria.</p>
+      </div>
+    </div>
+  </main>
+</div>

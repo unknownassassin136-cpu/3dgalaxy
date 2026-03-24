@@ -1,0 +1,83 @@
+<!-- CART PAGE -->
+<div class="cart-page">
+  <div class="container">
+    <h1 style="font-family:var(--font-display); font-size:2rem; margin-bottom:32px;">Shopping Cart</h1>
+
+    <div class="page-loader" ng-show="loading"><div class="spinner"></div></div>
+
+    <div class="empty-state" ng-show="!loading && (!cart.items || cart.items.length === 0)">
+      <div class="empty-icon">🛒</div>
+      <h3>Your cart is empty</h3>
+      <p>Looks like you haven't added anything yet</p>
+      <a href="#!/products" class="btn btn-primary mt-2">Browse Products</a>
+    </div>
+
+    <div class="cart-layout" ng-show="!loading && cart.items && cart.items.length > 0">
+      <!-- Cart Items -->
+      <div>
+        <div class="cart-item" ng-repeat="item in cart.items">
+          <a href="#!/product/{{item.product._id}}" class="cart-item-image">
+            <img ng-src="{{item.product.images[0]}}" alt="{{item.product.name}}">
+          </a>
+          <div class="cart-item-info">
+            <h4><a href="#!/product/{{item.product._id}}" style="color:var(--text-primary);">{{item.product.name}}</a></h4>
+            <div class="price" style="margin:4px 0;">{{getItemPrice(item) | inr}}</div>
+            <div class="cart-item-actions">
+              <div class="quantity-selector" style="margin-bottom:0;">
+                <button ng-click="updateQuantity(item, item.quantity - 1)" ng-disabled="item.quantity <= 1">−</button>
+                <input type="number" ng-value="item.quantity" readonly style="width:50px;">
+                <button ng-click="updateQuantity(item, item.quantity + 1)">+</button>
+              </div>
+              <span style="font-weight:600;">{{getItemPrice(item) * item.quantity | inr}}</span>
+              <button class="cart-item-remove" ng-click="removeItem(item)">
+                <i class="fas fa-trash-alt"></i> Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="cart-summary">
+        <h3>Order Summary</h3>
+        <div class="cart-summary-row">
+          <span>Subtotal</span>
+          <span>{{getSubtotal() | inr}}</span>
+        </div>
+        <div class="cart-summary-row">
+          <span>Shipping</span>
+          <span ng-show="getShipping() === 0" style="color:var(--success);">FREE</span>
+          <span ng-show="getShipping() > 0">{{getShipping() | inr}}</span>
+        </div>
+        <div class="cart-summary-row">
+          <span>Tax (18% GST)</span>
+          <span>{{getTax() | inr}}</span>
+        </div>
+        <div class="cart-summary-row" ng-show="discount > 0" style="color:var(--success);">
+          <span>Discount</span>
+          <span>−{{discount | inr}}</span>
+        </div>
+        <div class="cart-summary-row total">
+          <span>Total</span>
+          <span>{{getTotal() | inr}}</span>
+        </div>
+
+        <!-- Coupon -->
+        <div class="coupon-input">
+          <input type="text" ng-model="couponCode" placeholder="Coupon code" style="text-transform:uppercase;">
+          <button class="btn btn-outline btn-sm" ng-click="applyCoupon()">Apply</button>
+        </div>
+        <div class="alert alert-success" ng-show="couponApplied" style="font-size:0.85rem;">
+          <i class="fas fa-check-circle"></i> Coupon applied! Saving {{discount | inr}}
+        </div>
+
+        <button class="btn btn-primary w-100 btn-lg" ng-click="checkout()">
+          <i class="fas fa-lock"></i> Proceed to Checkout
+        </button>
+        <p style="text-align:center; margin-top:12px; color:var(--text-muted); font-size:0.8rem;">
+          <i class="fas fa-shield-halved"></i> Secure checkout · Free shipping over ₹999
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

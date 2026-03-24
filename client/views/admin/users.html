@@ -1,0 +1,74 @@
+<!-- ADMIN USERS -->
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <h3>Overview</h3>
+    <nav class="admin-nav mb-3"><a href="#!/admin"><i class="fas fa-home"></i> Dashboard</a></nav>
+    <h3>Catalog</h3>
+    <nav class="admin-nav mb-3">
+      <a href="#!/admin/products"><i class="fas fa-box"></i> Products</a>
+      <a href="#!/admin/categories"><i class="fas fa-tags"></i> Categories</a>
+    </nav>
+    <h3>Sales</h3>
+    <nav class="admin-nav mb-3">
+      <a href="#!/admin/orders"><i class="fas fa-shopping-cart"></i> Orders</a>
+      <a href="#!/admin/coupons"><i class="fas fa-ticket-alt"></i> Coupons</a>
+    </nav>
+    <h3>People</h3>
+    <nav class="admin-nav"><a href="#!/admin/users" class="active"><i class="fas fa-users"></i> Users</a></nav>
+  </aside>
+
+  <!-- Content -->
+  <main class="admin-content">
+    <div class="admin-header">
+      <h1>Customers & Users</h1>
+      <div class="search-bar" style="margin-bottom:0; width:300px;">
+        <input type="text" ng-model="searchQuery" placeholder="Search by name or email..." ng-keyup="$event.keyCode === 13 && loadUsers()">
+        <button class="btn btn-primary btn-sm btn-icon" ng-click="loadUsers()"><i class="fas fa-search"></i></button>
+      </div>
+    </div>
+
+    <div class="page-loader" ng-show="loading"><div class="spinner"></div></div>
+
+    <div class="data-table-container animate-fade-in-up" ng-hide="loading">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Joined Date</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="u in users">
+            <td style="font-weight:500;">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:32px; height:32px; border-radius:50%; background:var(--accent-gradient); display:flex; align-items:center; justify-content:center; color:white; font-size:0.8rem; font-weight:700;">{{u.name[0]}}</div>
+                {{u.name}}
+              </div>
+            </td>
+            <td>{{u.email}}</td>
+            <td>{{u.createdAt | date:'dd MMM yyyy'}}</td>
+            <td>
+              <span class="badge" ng-class="u.role==='admin' ? 'badge-featured' : 'badge-new'" style="background:var(--bg-glass); border:1px solid var(--border);">
+                {{u.role}}
+              </span>
+            </td>
+            <td>
+              <span class="stock-badge" ng-class="u.isActive ? 'stock-in' : 'stock-out'">{{u.isActive ? 'Active' : 'Banned'}}</span>
+            </td>
+            <td>
+              <button class="btn btn-outline btn-sm" ng-click="toggleRole(u)">Make {{u.role === 'admin' ? 'User' : 'Admin'}}</button>
+              <button class="btn btn-sm" ng-class="u.isActive ? 'btn-danger' : 'btn-success'" ng-click="toggleActive(u)" style="margin-left:8px;">
+                {{u.isActive ? 'Ban' : 'Unban'}}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>

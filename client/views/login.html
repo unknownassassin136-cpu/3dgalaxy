@@ -1,0 +1,26 @@
+<!-- LOGIN PAGE -->
+<div class="auth-page">
+  <div class="auth-card animate-fade-in-up">
+    <h2>Welcome Back</h2>
+    <p class="auth-subtitle">Sign in to your 3D Galaxy account</p>
+
+    <form ng-submit="submit()">
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" class="form-control" ng-model="formData.email" placeholder="you@example.com" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" class="form-control" ng-model="formData.password" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn btn-primary w-100 btn-lg" ng-disabled="loading">
+        <i class="fas" ng-class="{'fa-spinner fa-spin': loading, 'fa-sign-in-alt': !loading}"></i>
+        {{loading ? 'Signing in...' : 'Sign In'}}
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      Don't have an account? <a href="#!/register">Create one</a>
+    </div>
+  </div>
+</div>

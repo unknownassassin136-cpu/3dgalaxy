@@ -1,0 +1,122 @@
+<!-- ADMIN COUPONS AND CATEGORIES -->
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <h3>Overview</h3>
+    <nav class="admin-nav mb-3"><a href="#!/admin"><i class="fas fa-home"></i> Dashboard</a></nav>
+    <h3>Catalog</h3>
+    <nav class="admin-nav mb-3">
+      <a href="#!/admin/products"><i class="fas fa-box"></i> Products</a>
+      <a href="#!/admin/categories"><i class="fas fa-tags"></i> Categories</a>
+    </nav>
+    <h3>Sales</h3>
+    <nav class="admin-nav mb-3">
+      <a href="#!/admin/orders"><i class="fas fa-shopping-cart"></i> Orders</a>
+      <a href="#!/admin/coupons" class="active"><i class="fas fa-ticket-alt"></i> Coupons</a>
+    </nav>
+    <h3>People</h3>
+    <nav class="admin-nav"><a href="#!/admin/users"><i class="fas fa-users"></i> Users</a></nav>
+  </aside>
+
+  <!-- Content -->
+  <main class="admin-content">
+    <div class="admin-header">
+      <h1>Discount Coupons</h1>
+      <button class="btn btn-primary" ng-click="openAdd()"><i class="fas fa-plus"></i> Create Coupon</button>
+    </div>
+
+    <div class="page-loader" ng-show="loading"><div class="spinner"></div></div>
+
+    <div class="data-table-container animate-fade-in-up" ng-hide="loading">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Discount</th>
+            <th>Min. Purchase</th>
+            <th>Expires</th>
+            <th>Usage</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="c in coupons">
+            <td style="font-weight:700; color:var(--accent-primary-light); letter-spacing:1px;">{{c.code}}</td>
+            <td>
+              {{c.discountType === 'percentage' ? (c.discountValue + '%') : (c.discountValue | inr)}}
+            </td>
+            <td>{{c.minPurchase > 0 ? (c.minPurchase | inr) : 'None'}}</td>
+            <td ng-class="{'text-danger': (c.expiresAt | date:'yyyyMMdd') < (1 | date:'yyyyMMdd')}">{{c.expiresAt | date:'dd MMM yyyy'}}</td>
+            <td>{{c.usageCount}} / {{c.usageLimit > 0 ? c.usageLimit : '∞'}}</td>
+            <td>
+              <span class="badge" ng-class="c.isActive ? 'badge-new' : 'badge-danger'">{{c.isActive ? 'Active' : 'Inactive'}}</span>
+            </td>
+            <td>
+              <button class="btn btn-icon btn-sm" style="color:var(--info);" ng-click="openEdit(c)"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-icon btn-sm" style="color:var(--danger);" ng-click="deleteCoupon(c)"><i class="fas fa-trash-alt"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Add/Edit Coupon Modal -->
+    <div class="modal-overlay" ng-show="showModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>{{editMode ? 'Edit Coupon' : 'Create Coupon'}}</h2>
+          <button class="modal-close" ng-click="showModal = false"><i class="fas fa-times"></i></button>
+        </div>
+        <form ng-submit="saveCoupon()">
+          <div class="form-group">
+            <label>Coupon Code (Uppercase) *</label>
+            <input type="text" class="form-control" ng-model="form.code" style="text-transform:uppercase;" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Discount Type *</label>
+              <select class="form-control" ng-model="form.discountType" required>
+                <option value="percentage">Percentage (%)</option>
+                <option value="fixed">Fixed Amount (₹)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Discount Value *</label>
+              <input type="number" class="form-control" ng-model="form.discountValue" min="1" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Minimum Purchase (₹)</label>
+              <input type="number" class="form-control" ng-model="form.minPurchase" min="0">
+            </div>
+            <div class="form-group">
+              <label>Max Discount (₹) [for percentage]</label>
+              <input type="number" class="form-control" ng-model="form.maxDiscount" min="0">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Expiry Date *</label>
+              <input type="date" class="form-control" ng-model="form.expiresAt" required>
+            </div>
+            <div class="form-group">
+              <label>Usage Limit (0 for unlimited)</label>
+              <input type="number" class="form-control" ng-model="form.usageLimit" min="0">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="filter-option">
+              <input type="checkbox" ng-model="form.isActive"> Is Active
+            </label>
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:24px;">
+            <button type="button" class="btn btn-outline" ng-click="showModal = false">Cancel</button>
+            <button type="submit" class="btn btn-primary">{{editMode ? 'Update' : 'Save'} Coupon</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>

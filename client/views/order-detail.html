@@ -1,0 +1,72 @@
+<!-- ORDER DETAIL PAGE -->
+<div class="profile-page">
+  <div class="container">
+    <div class="page-loader" ng-show="loading"><div class="spinner"></div></div>
+
+    <div ng-if="order && !loading">
+      <a href="#!/profile/orders" style="color:var(--text-secondary); display:inline-flex; align-items:center; gap:8px; margin-bottom:24px;">
+        <i class="fas fa-arrow-left"></i> Back to Orders
+      </a>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px; flex-wrap:wrap; gap:16px;">
+        <h1 style="font-family:var(--font-display); font-size:1.8rem;">Order {{order.orderNumber}}</h1>
+        <span class="order-status" ng-class="getStatusClass(order.status)" style="font-size:0.9rem; padding:8px 20px;">{{order.status}}</span>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 380px; gap:24px;">
+        <div>
+          <!-- Items -->
+          <div class="form-card">
+            <h3>Order Items</h3>
+            <div ng-repeat="item in order.items" style="display:flex; gap:16px; padding:12px 0; border-bottom:1px solid var(--border);">
+              <img ng-src="{{item.image}}" style="width:70px; height:70px; border-radius:8px; object-fit:cover;">
+              <div style="flex:1;">
+                <div style="font-weight:500;">{{item.name}}</div>
+                <div style="color:var(--text-muted); font-size:0.85rem;">Qty: {{item.quantity}} × {{item.price | inr}}</div>
+              </div>
+              <div style="font-weight:600;">{{item.price * item.quantity | inr}}</div>
+            </div>
+          </div>
+
+          <!-- Shipping -->
+          <div class="form-card mt-3">
+            <h3><i class="fas fa-truck"></i> Shipping Address</h3>
+            <p>{{order.shippingAddress.fullName}}<br>
+               {{order.shippingAddress.street}}<br>
+               {{order.shippingAddress.city}}, {{order.shippingAddress.state}} {{order.shippingAddress.zipCode}}<br>
+               {{order.shippingAddress.country}}<br>
+               Phone: {{order.shippingAddress.phone}}</p>
+            <p ng-show="order.trackingNumber" style="margin-top:12px;">
+              <strong>Tracking:</strong> {{order.trackingNumber}}
+            </p>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="cart-summary">
+          <h3>Payment Summary</h3>
+          <div class="cart-summary-row"><span>Subtotal</span><span>{{order.itemsTotal | inr}}</span></div>
+          <div class="cart-summary-row"><span>Shipping</span><span>{{order.shippingCost === 0 ? 'FREE' : (order.shippingCost | inr)}}</span></div>
+          <div class="cart-summary-row"><span>Tax</span><span>{{order.tax | inr}}</span></div>
+          <div class="cart-summary-row" ng-show="order.discount > 0" style="color:var(--success);"><span>Discount</span><span>−{{order.discount | inr}}</span></div>
+          <div class="cart-summary-row total"><span>Total</span><span>{{order.totalPrice | inr}}</span></div>
+
+          <div style="margin-top:20px; padding:12px; border-radius:8px; background:var(--bg-glass);">
+            <div style="font-size:0.85rem; color:var(--text-muted);">Payment Method</div>
+            <div style="font-weight:600; text-transform:capitalize;">{{order.paymentMethod}}</div>
+          </div>
+          <div style="margin-top:8px; padding:12px; border-radius:8px; background:var(--bg-glass);">
+            <div style="font-size:0.85rem; color:var(--text-muted);">Payment Status</div>
+            <div ng-class="{'stock-in': order.isPaid, 'stock-out': !order.isPaid}" class="stock-badge">
+              {{order.isPaid ? 'Paid' : 'Pending'}} <span ng-show="order.paidAt">on {{order.paidAt | date:'dd MMM yyyy'}}</span>
+            </div>
+          </div>
+          <div style="margin-top:8px; padding:12px; border-radius:8px; background:var(--bg-glass);">
+            <div style="font-size:0.85rem; color:var(--text-muted);">Order Date</div>
+            <div>{{order.createdAt | date:'dd MMM yyyy, hh:mm a'}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
