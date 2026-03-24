@@ -5,7 +5,7 @@
 (function() {
   'use strict';
 
-  var API_BASE = 'http://localhost:5000/api';
+  var API_BASE = 'https://threedgalaxy.onrender.com/api';
 
   var app = angular.module('galaxyStore', ['ngRoute']);
 
