@@ -4,6 +4,8 @@
  */
 require('dotenv').config();
 const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
@@ -32,6 +34,8 @@ app.use('/api/orders', require('./routes/orders'));
 app.use('/api/payment', require('./routes/payment'));
 app.use('/api/coupons', require('./routes/coupons'));
 app.use('/api/admin', require('./routes/admin'));
+app.use('/api/chat', require('./routes/chat'));
+app.use('/api/contact', require('./routes/contact'));
 
 // Serve static client files in production
 app.use(express.static(path.join(__dirname, '../client')));
@@ -47,8 +51,18 @@ app.use(errorHandler);
 // Start server
 const PORT = process.env.PORT || 5000;
 
+// Socket.io setup
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: '*', // For development
+    methods: ['GET', 'POST']
+  }
+});
+require('./socket/chat')(io);
+
 connectDB().then(() => {
-  app.listen(PORT, () => console.log("Server running on port " + PORT));
+  server.listen(PORT, () => console.log("Server running on port " + PORT + " with Socket.io"));
 }).catch(err => {
   console.error('Failed to start server:', err.message);
 });

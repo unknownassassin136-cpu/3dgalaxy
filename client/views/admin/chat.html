@@ -1,0 +1,53 @@
+<div class="container" style="padding-top: 100px; padding-bottom: 50px;">
+  <div class="admin-header" style="display:flex; justify-content:space-between; margin-bottom: 20px;">
+    <h2><i class="fas fa-comments"></i> Customer Support Chat</h2>
+    <a href="#!/admin" class="btn btn-outline">Back to Dashboard</a>
+  </div>
+
+  <div class="admin-chat-layout">
+    <!-- Sidebar / Inbox -->
+    <div class="admin-chat-sidebar">
+      <div class="admin-chat-header">
+        Active Conversations
+      </div>
+      <div class="admin-chat-list">
+        <div ng-if="sessions.length === 0" style="padding: 20px; color: #888; text-align: center;">
+          No active chats.
+        </div>
+        <div class="admin-chat-item" 
+             ng-repeat="session in sessions track by session._id" 
+             ng-class="{'active': activeSession._id === session._id}"
+             ng-click="selectSession(session)">
+          <div class="admin-chat-name">
+            {{session.senderName}}
+            <span class="admin-chat-unread" ng-show="session.unreadCount > 0">{{session.unreadCount}}</span>
+          </div>
+          <div class="admin-chat-preview">{{session.lastMessage}}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Chat Window -->
+    <div class="admin-chat-main">
+      <div ng-if="!activeSession" style="flex:1; display:flex; align-items:center; justify-content:center; color:#888;">
+        Select a conversation from the left to start chatting.
+      </div>
+
+      <div class="admin-chat-body" id="admin-chat-body" ng-if="activeSession">
+        <div ng-repeat="msg in messages" 
+             class="chat-bubble" 
+             ng-class="{'admin': msg.senderRole==='admin', 'customer': msg.senderRole==='customer'}">
+          <div class="chat-sender">{{msg.senderName}}</div>
+          <div class="chat-text">{{msg.content}}</div>
+        </div>
+      </div>
+
+      <div class="admin-chat-footer" ng-if="activeSession">
+        <form ng-submit="sendReply()">
+          <input type="text" ng-model="data.replyMessage" placeholder="Type a reply to {{activeSession.senderName}}..." required>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Send</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

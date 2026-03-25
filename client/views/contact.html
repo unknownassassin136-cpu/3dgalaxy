@@ -1,0 +1,34 @@
+<div class="container section animate-fade-in" style="margin-top: 80px;">
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <div class="card" style="background: var(--bg-card); border: 1px solid var(--border);">
+        <div class="card-body" style="padding: 30px; background: transparent;">
+          <h2 style="color: var(--text-primary); text-align: center; margin-bottom: 20px;">Contact Us</h2>
+          <p style="color: var(--text-secondary); text-align: center; margin-bottom: 30px;">Have questions? We'd love to hear from you!</p>
+          
+          <form ng-submit="submitContact()">
+            <div class="form-group mb-3">
+              <label style="color: var(--text-primary);">Name</label>
+              <input type="text" class="form-control" ng-model="formData.name" required style="background: var(--surface); color: var(--text-primary); border: 1px solid var(--border);">
+            </div>
+            <div class="form-group mb-3">
+              <label style="color: var(--text-primary);">Email</label>
+              <input type="email" class="form-control" ng-model="formData.email" required style="background: var(--surface); color: var(--text-primary); border: 1px solid var(--border);">
+            </div>
+            <div class="form-group mb-3">
+              <label style="color: var(--text-primary);">Subject</label>
+              <input type="text" class="form-control" ng-model="formData.subject" required style="background: var(--surface); color: var(--text-primary); border: 1px solid var(--border);">
+            </div>
+            <div class="form-group mb-4">
+              <label style="color: var(--text-primary);">Message</label>
+              <textarea class="form-control" ng-model="formData.message" rows="5" required style="background: var(--surface); color: var(--text-primary); border: 1px solid var(--border); resize: vertical;"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;" ng-disabled="isSubmitting">
+              {{ isSubmitting ? 'Sending...' : 'Send Message' }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

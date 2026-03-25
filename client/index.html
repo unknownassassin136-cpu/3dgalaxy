@@ -6,6 +6,7 @@
   <meta name="description" content="3D Galaxy Store - Premium 3D Miniatures, Moon Lamps, and Customised Gifts. The perfect gift for your loved ones.">
   <title>3D Galaxy Store — Premium Customised Gifts</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/chat.css?v=3">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
@@ -61,6 +62,37 @@
       </div>
     </div>
   </nav>
+
+  <!-- Floating Chat Widget -->
+  <div class="chat-widget-container" ng-controller="ChatWidgetCtrl" ng-show="isCustomer()">
+    <div class="chat-widget-button" ng-click="toggleChat()" ng-class="{'open': isOpen}">
+      <i class="fas fa-comment-dots" ng-show="!isOpen"></i>
+      <i class="fas fa-times" ng-show="isOpen"></i>
+    </div>
+    
+    <div class="chat-widget-window" ng-show="isOpen" class="animate-fade-in">
+      <div class="chat-widget-header">
+        <h4><i class="fas fa-headset"></i> Customer Support</h4>
+      </div>
+      <div class="chat-widget-body" id="chat-widget-body">
+        <div ng-if="messages.length === 0" class="chat-muted-text">
+          Hi! 👋 How can we help you today?
+        </div>
+        <div ng-repeat="msg in messages" 
+             class="chat-bubble" 
+             ng-class="{'admin': msg.senderRole==='admin', 'customer': msg.senderRole==='customer'}">
+          <div class="chat-sender">{{msg.senderName}}</div>
+          <div class="chat-text">{{msg.content}}</div>
+        </div>
+      </div>
+      <div class="chat-widget-footer">
+        <form ng-submit="sendMessage()" style="display:flex; width:100%;">
+          <input type="text" ng-model="newMessage" placeholder="Type a message..." required>
+          <button type="submit"><i class="fas fa-paper-plane"></i></button>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <!-- Main Content (ngView) -->
   <div ng-view class="animate-fade-in"></div>
@@ -127,6 +159,7 @@
   <script src="services/CartService.js"></script>
   <script src="services/OrderService.js"></script>
   <script src="services/AdminService.js"></script>
+  <script src="services/ContactService.js"></script>
 
   <!-- Controllers -->
   <script src="controllers/NavCtrl.js"></script>
@@ -138,6 +171,14 @@
   <script src="controllers/AuthCtrl.js"></script>
   <script src="controllers/ProfileCtrl.js"></script>
   <script src="controllers/AdminCtrl.js"></script>
+  <script src="controllers/ContactCtrl.js"></script>
+  <script src="controllers/AdminContactsCtrl.js"></script>
+
+  <!-- Real-time Chat -->
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script src="services/ChatService.js"></script>
+  <script src="controllers/ChatCtrl.js"></script>
+  <script src="controllers/AdminChatCtrl.js"></script>
 
 </body>
 </html>

@@ -5,7 +5,7 @@
 (function() {
   'use strict';
 
-  var API_BASE = 'https://threedgalaxy.onrender.com/api';
+  var API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : 'https://threedgalaxy.onrender.com/api';
 
   var app = angular.module('galaxyStore', ['ngRoute']);
 
@@ -27,6 +27,7 @@
       .when('/profile', { templateUrl: 'views/profile.html', controller: 'ProfileCtrl' })
       .when('/profile/orders', { templateUrl: 'views/profile.html', controller: 'ProfileCtrl' })
       .when('/order/:id', { templateUrl: 'views/order-detail.html', controller: 'ProfileCtrl' })
+      .when('/contact', { templateUrl: 'views/contact.html', controller: 'ContactCtrl' })
       // Admin routes
       .when('/admin', { templateUrl: 'views/admin/dashboard.html', controller: 'AdminDashboardCtrl' })
       .when('/admin/products', { templateUrl: 'views/admin/products.html', controller: 'AdminProductsCtrl' })
@@ -34,6 +35,8 @@
       .when('/admin/users', { templateUrl: 'views/admin/users.html', controller: 'AdminUsersCtrl' })
       .when('/admin/coupons', { templateUrl: 'views/admin/coupons.html', controller: 'AdminCouponsCtrl' })
       .when('/admin/categories', { templateUrl: 'views/admin/categories.html', controller: 'AdminCategoriesCtrl' })
+      .when('/admin/chat', { templateUrl: 'views/admin/chat.html', controller: 'AdminChatCtrl' })
+      .when('/admin/contacts', { templateUrl: 'views/admin/contacts.html', controller: 'AdminContactsCtrl' })
       .otherwise({ redirectTo: '/' });
   }]);
 

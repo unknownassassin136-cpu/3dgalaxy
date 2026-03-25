@@ -8,6 +8,7 @@ const express = require('express');
 const User = require('../models/User');
 const Product = require('../models/Product');
 const Order = require('../models/Order');
+const Contact = require('../models/Contact');
 const { protect, adminOnly } = require('../middleware/auth');
 const router = express.Router();
 
@@ -84,6 +85,39 @@ router.put('/users/:id', protect, adminOnly, async (req, res) => {
     if (req.body.isActive !== undefined) user.isActive = req.body.isActive;
     await user.save();
     res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Get all contacts
+router.get('/contacts', protect, adminOnly, async (req, res) => {
+  try {
+    const contacts = await Contact.find().sort({ createdAt: -1 });
+    res.json(contacts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Mark contact as read
+router.put('/contacts/:id/read', protect, adminOnly, async (req, res) => {
+  try {
+    const contact = await Contact.findById(req.params.id);
+    if (!contact) return res.status(404).json({ message: 'Contact not found' });
+    contact.isRead = true;
+    await contact.save();
+    res.json(contact);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Delete contact
+router.delete('/contacts/:id', protect, adminOnly, async (req, res) => {
+  try {
+    await Contact.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Contact deleted' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
